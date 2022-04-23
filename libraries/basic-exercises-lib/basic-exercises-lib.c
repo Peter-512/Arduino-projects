@@ -129,6 +129,11 @@ void toggleLedByString(char string[])
     }
 }
 
+/**
+ * @brief Blinks all LEDs a certain amount of times
+ *
+ * @param amount
+ */
 void blinkAllLights(int amount)
 {
     enableAllLeds();
@@ -139,6 +144,11 @@ void blinkAllLights(int amount)
     }
 }
 
+/**
+ * @brief Traversesa string and calculates a number for each char and blinks all LEDs that many times
+ *
+ * @param string
+ */
 void blinkLightsByString(char string[])
 {
     enableAllLeds();
@@ -146,7 +156,7 @@ void blinkLightsByString(char string[])
     int amount;
     while (string[i])
     {
-        amount = (((int)string[i]) - 1) % 4 + 1;
+        amount = ((int)string[i]) - 96; // offset so that "a" blinks one time
         blinkAllLights(amount);
         _delay_ms(500);
         i++;

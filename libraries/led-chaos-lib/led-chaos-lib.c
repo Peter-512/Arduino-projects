@@ -5,6 +5,10 @@
 #include <util/delay.h>
 #include <stdlib.h>
 
+/**
+ * @brief Infinite loop that turns on a random LED with a random brightness for a random duration between 100ms and 1000ms
+ *
+ */
 void chaosLights()
 {
     srand(0);
@@ -15,6 +19,10 @@ void chaosLights()
     }
 }
 
+/**
+ * @brief Infinite loop that toggles a random LED with a random delay between 100ms and 500ms
+ *
+ */
 void chaosLightsExtra()
 {
     srand(0);
