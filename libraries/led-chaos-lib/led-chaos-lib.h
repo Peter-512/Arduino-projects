@@ -1,0 +1,3 @@
+void chaosLights();
+
+void chaosLightsExtra();
