@@ -1,3 +1,14 @@
+/**
+ * @file led-chaos-lib.c
+ * @author Peter Buschenreiter
+ * @brief
+ * @version 0.1
+ * @date 2022-04-24
+ *
+ * @copyright Copyright (c) 2022
+ *
+ */
+
 #include <led-chaos-lib.h>
 #include <led-lib.h>
 #include <dimmed-led-lib.h>

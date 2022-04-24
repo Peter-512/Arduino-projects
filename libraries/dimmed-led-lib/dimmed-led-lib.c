@@ -1,3 +1,14 @@
+/**
+ * @file dimmed-led-lib.c
+ * @author Peter Buschenreiter
+ * @brief
+ * @version 0.1
+ * @date 2022-04-24
+ *
+ * @copyright Copyright (c) 2022
+ *
+ */
+
 #include <dimmed-led-lib.h>
 #include <led-lib.h>
 #define __DELAY_BACKWARD_COMPATIBLE__ // alows delay functions to take variables as arguments

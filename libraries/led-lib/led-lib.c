@@ -1,3 +1,14 @@
+/**
+ * @file led-lib.c
+ * @author Peter Buschenreiter
+ * @brief
+ * @version 0.1
+ * @date 2022-04-24
+ *
+ * @copyright Copyright (c) 2022
+ *
+ */
+
 #include <led-lib.h>
 #include <avr/io.h>
 #define NUMBER_OF_LEDS 4
