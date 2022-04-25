@@ -536,9 +536,9 @@ int morseChar(char character, int charCounter)
 }
 
 /**
- * @brief
+ * @brief Displays the countdown, then the supplied string in morse code with the LEDs and the end sequence at the end
  *
- * @param string
+ * @param string to be displayed as morse
  */
 void morse(char string[])
 {
