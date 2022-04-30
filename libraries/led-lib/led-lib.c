@@ -11,7 +11,6 @@
 
 #include <led-lib.h>
 #include <avr/io.h>
-#define NUMBER_OF_LEDS 4
 
 /**
  * @brief Enables an LED for output and suppresses the initial turning on

@@ -1,4 +1,9 @@
 #include <avr/io.h>
+#define LED1 0
+#define LED2 1
+#define LED3 2
+#define LED4 3
+#define NUMBER_OF_LEDS 4
 
 void enableOneLed(int index);
 
