@@ -1,7 +1,7 @@
 /**
  * @file main.c
  * @author Peter Buschenreiter
- * @brief
+ * @brief Simon Says game played on an arduino shield
  * @version 0.1
  * @date 2022-04-30
  *

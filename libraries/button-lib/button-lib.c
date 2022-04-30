@@ -1,3 +1,14 @@
+/**
+ * @file button-lib.c
+ * @author Peter Buschenreiter
+ * @brief Useful functions and defines to work with buttons on an arduino shield
+ * @version 0.1
+ * @date 2022-04-30
+ *
+ * @copyright Copyright (c) 2022
+ *
+ */
+
 #include <util/delay.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
