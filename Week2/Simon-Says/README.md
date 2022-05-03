@@ -5,10 +5,10 @@
 I start by initializing everything I need for the game to work.
 
 ```c
-	initUSART();
-	enableAllLeds();
-	enableAllButtons();
-	getButtonsReadyForInterrupts();
+initUSART();
+enableAllLeds();
+enableAllButtons();
+getButtonsReadyForInterrupts();
 ```
 
 They all do more or less what they say, but let's look at two in a bit more detail.
@@ -59,21 +59,19 @@ Right after that it sets the random seed and turns off the global interrupt syst
 
 ---
 
-````c
+```c
 int seed = 0;
-	while (!button_pushed)
-	{
-		lightUpOneLed(LED4);
-		_delay_ms(START_DELAY);
-		lightDownOneLed(LED4);
-		_delay_ms(START_DELAY);
-		seed++;
-	}
-	cli();
-	srand(seed);
-    ```
-
-````
+while (!button_pushed)
+{
+	lightUpOneLed(LED4);
+	_delay_ms(START_DELAY);
+	lightDownOneLed(LED4);
+	_delay_ms(START_DELAY);
+	seed++;
+}
+cli();
+srand(seed);
+```
 
 ---
 
