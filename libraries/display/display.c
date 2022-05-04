@@ -39,11 +39,11 @@ void shift(uint8_t val, uint8_t bitorder)
 	{
 		if (bitorder == LSBFIRST)
 		{
-			bit = !!(val & (1 << i));
+			bit = !!(val & _BV(i));
 		}
 		else
 		{
-			bit = !!(val & (1 << (7 - i)));
+			bit = !!(val & _BV(7 - i));
 		}
 		// write bit to register
 		if (bit == HIGH)
