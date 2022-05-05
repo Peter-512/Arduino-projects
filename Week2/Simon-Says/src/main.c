@@ -26,7 +26,7 @@
 #define PUZZLE_DELAY 1000
 // #define DEBUG
 
-uint8_t buttonPushed = false;
+uint8_t btnPushed = false;
 uint8_t button;
 
 /**
@@ -41,7 +41,7 @@ ISR(PCINT1_vect)
 	if (button < NUMBER_OF_BUTTONS)
 	{
 		lightUpOneLed(button);
-		buttonPushed = true;
+		btnPushed = true;
 	}
 }
 
@@ -110,9 +110,9 @@ uint8_t readInput(uint8_t *array, uint8_t len)
 	uint8_t current = 0;
 	while (current < len)
 	{
-		buttonPushed = false;
+		btnPushed = false;
 		sei();
-		while (!buttonPushed)
+		while (!btnPushed)
 		{
 #ifndef DEBUG
 			_delay_us(1);
@@ -146,7 +146,7 @@ int main(int argc, char const *argv[])
 
 	// Seeding the random generator
 	int seed = 0;
-	while (!buttonPushed)
+	while (!btnPushed)
 	{
 		lightUpOneLed(LED4);
 		_delay_ms(START_DELAY);
