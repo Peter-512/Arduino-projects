@@ -37,6 +37,7 @@ void swapPlayers()
 
 void saveTurn()
 {
+	// TODO figure out how to model the data im saving and how to allocate the memory properly
 }
 
 void takeTurn()
