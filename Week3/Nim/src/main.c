@@ -6,21 +6,25 @@
 #include <potentiometer.h>
 #include <util/delay.h>
 #include <led-lib.h>
+#include <usart.h>
 #define START_NUMBER 21
 #define MAX_NUMBER 3
 #define true 1
 #define false !true
 
-// #define DEBUG
-#ifdef DEBUG
-#include <usart.h>
-#endif
-
-uint8_t firstButtonPush = false;
+uint8_t button;
+uint8_t btnPushed = false;
 uint8_t matchesToTake = 1;
 char players[] = "PC";
 char *currentPlayer = players;
-uint8_t matches = START_NUMBER;
+int matches;
+int maxNumber;
+uint16_t seed;
+
+uint8_t isPlayerCurrentPlayer()
+{
+	return *currentPlayer == players[0];
+}
 
 void swapPlayers()
 {
@@ -31,56 +35,87 @@ void swapPlayers()
 	}
 }
 
+void saveTurn()
+{
+}
+
+void takeTurn()
+{
+	switch (button)
+	{
+	case BUTTON1:
+		// TODO maybe extra logic here and on BUTTON3 so you cant take more than sticks are left? sounds tricky though
+		if (isPlayerCurrentPlayer())
+		{
+			matchesToTake = --matchesToTake ? matchesToTake : maxNumber;
+		}
+		break;
+	case BUTTON2:
+		saveTurn();
+		swapPlayers();
+		matches -= matchesToTake;
+		if (!isPlayerCurrentPlayer())
+		{
+			matchesToTake = (matches - 1) % (maxNumber + 1);
+			matchesToTake = matchesToTake ? matchesToTake : rand() % maxNumber + 1;
+		}
+		else
+		{
+			matchesToTake = 1;
+		}
+		break;
+	case BUTTON3:
+		if (isPlayerCurrentPlayer())
+		{
+			matchesToTake = matchesToTake % maxNumber + 1;
+		}
+		break;
+	default:
+		break;
+	}
+}
+
 /**
  * @brief Construct a new ISR object
- *
  *
  */
 ISR(PCINT1_vect)
 {
-	uint8_t button = whichButtonPushed();
-	if (firstButtonPush)
+	button = whichButtonPushed();
+	takeTurn();
+
+	if (!btnPushed)
 	{
-		switch (button)
+		btnPushed = true;
+		seed = getPotentiometerValue();
+		srand(seed);
+		currentPlayer += rand() % 2; // * starting player gets chosen randomly by default
+		if (button == BUTTON3)		 // * BUTTON3 activates random mode
 		{
-		case BUTTON1:
-			matchesToTake--; // ? this is an ugly solution but im too tired
-			if (matchesToTake == 0)
-			{
-				matchesToTake += MAX_NUMBER;
-			}
-			break;
-		case BUTTON2:
-			swapPlayers();
-			matches -= matchesToTake;
-			if (*currentPlayer == players[1]) // * if currentPlayer is C
-			{
-				matchesToTake = (matches - 1) % (MAX_NUMBER + 1);
-			}
-			else
-			{
-				matchesToTake = 1;
-			}
-			break;
-		case BUTTON3:
-			matchesToTake = matchesToTake % MAX_NUMBER + 1;
-			break;
-		default:
-			break;
+			matches = rand() % 79 + 21; // * 21 - 99
+			maxNumber = rand() % 7 + 3; // *  3 -  9
 		}
-	}
-	if (button < NUMBER_OF_BUTTONS)
-	{
-		firstButtonPush = true;
+		else
+		{
+			matches = START_NUMBER;
+			maxNumber = MAX_NUMBER;
+		}
+		if (!isPlayerCurrentPlayer())
+		{
+			matchesToTake = (matches - 1) % (maxNumber + 1);
+		}
+		matchesToTake = matchesToTake ? matchesToTake : rand() % maxNumber + 1;
 	}
 }
 
 void setup()
 {
+	initUSART();
 	enableAllButtons();
 	getButtonsReadyForInterrupts();
 	enableAllLeds();
-	while (!firstButtonPush)
+	initADC();
+	while (!btnPushed)
 	{
 		for (int j = 0; j < 4; j++)
 		{
@@ -90,9 +125,6 @@ void setup()
 	}
 	lightDownAllLeds();
 	initDisplay();
-	initADC();
-	uint16_t seed = getPotentiometerValue();
-	srand(seed);
 	writeNumberAndWait(seed, 2000);
 }
 
@@ -112,12 +144,16 @@ int main(int argc, char const *argv[])
 	{
 		displayScreen();
 	}
-	while (1)
+
+	cli();
+
+	if (isPlayerCurrentPlayer())
 	{
-		writeLetterToSegment(0, *currentPlayer);
-		writeLetterToSegment(1, 'W');
-		writeLetterToSegment(2, 'O');
-		writeLetterToSegment(3, 'N');
+		writeLongWord("congratulations you won   ", 24);
+	}
+	else
+	{
+		writeLongWord("you suck try again", 19);
 	}
 	return 0;
 }
