@@ -13,7 +13,7 @@
 #define false !true
 
 uint8_t button;
-uint8_t btnPushed = false;
+uint8_t firstButtonPush = true;
 uint8_t matchesToTake = 1;
 char players[] = "PC";
 char *currentPlayer = players;
@@ -83,11 +83,13 @@ void takeTurn()
 ISR(PCINT1_vect)
 {
 	button = whichButtonPushed();
-	takeTurn();
-
-	if (!btnPushed)
+	if (!firstButtonPush)
 	{
-		btnPushed = true;
+		takeTurn();
+	}
+	else
+	{
+		firstButtonPush = false;
 		seed = getPotentiometerValue();
 		srand(seed);
 		currentPlayer += rand() % 2; // * starting player gets chosen randomly by default
@@ -116,7 +118,7 @@ void setup()
 	getButtonsReadyForInterrupts();
 	enableAllLeds();
 	initADC();
-	while (!btnPushed)
+	while (!firstButtonPush)
 	{
 		for (int j = 0; j < 4; j++)
 		{
