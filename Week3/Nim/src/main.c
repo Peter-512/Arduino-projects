@@ -40,7 +40,7 @@ void saveTurn()
 	// TODO figure out how to model the data im saving and how to allocate the memory properly
 }
 
-void takeTurn()
+void doAction()
 {
 	switch (button)
 	{
@@ -85,7 +85,7 @@ ISR(PCINT1_vect)
 	button = whichButtonPushed();
 	if (!firstButtonPush)
 	{
-		takeTurn();
+		doAction();
 	}
 	else
 	{

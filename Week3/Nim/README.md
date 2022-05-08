@@ -64,7 +64,7 @@ ISR(PCINT1_vect)
 	button = whichButtonPushed();
 	if (!firstButtonPush)
 	{
-		takeTurn();
+		doAction();
 	}
 	else
 	{
@@ -95,10 +95,10 @@ To see what happens in the `ISR`, please refer to the following flow diagram.
 
 ![Flow diagram of ISR method](resources/flow.png "Flow diagram")
 
-## Taking a turn
+## Taking an action
 
 ```c
-void takeTurn()
+void doAction()
 {
 	switch (button)
 	{
@@ -132,3 +132,41 @@ void takeTurn()
 	}
 }
 ```
+
+This method takes one of three actions depending on the button that was pressed. It executes every time a button is pressed, except the very first time.
+
+-   BUTTON1: decrease the number of matches to take
+-   BUTTON2:
+    -   swaps active player
+    -   reduce matches by matchesToTake
+    -   set matchesToTake ready for next move
+        -   computer: best possible strategy
+        -   if that is not possible, set it to something random
+        -   user: set to 1
+-   BUTTON3: increase the number of matches to take
+
+## Some helper functions
+
+```c
+uint8_t isPlayerCurrentPlayer()
+{
+	return *currentPlayer == players[0];
+}
+```
+
+This returns true (1) or false (0) depending on if the user is the current player or not.
+
+---
+
+```c
+void swapPlayers()
+{
+	currentPlayer++;
+	if (!*currentPlayer)
+	{
+		currentPlayer -= 2;
+	}
+}
+```
+
+Increments the currentPlayer pointer, which points at a `char[]` and when it points to the `\0` char, it decrements the pointer by two.
