@@ -21,11 +21,20 @@ int matches;
 int maxNumber;
 uint16_t seed;
 
+/**
+ * @brief Returns if the user is the current active player
+ *
+ * @return uint8_t 0 or 1
+ */
 uint8_t isPlayerCurrentPlayer()
 {
 	return *currentPlayer == players[0];
 }
 
+/**
+ * @brief Increments the currentPlayer pointer and moves it back if it reaches the \0 char
+ *
+ */
 void swapPlayers()
 {
 	currentPlayer++;
@@ -40,6 +49,14 @@ void saveTurn()
 	// TODO figure out how to model the data im saving and how to allocate the memory properly
 }
 
+/**
+ * @brief Does one of the actions based on the button that was pushed.
+ *
+ * BUTTON1: decrement matchesToTake
+ * BUTTON2: finish turn
+ * BUTTON3: increment matchesToTake
+ *
+ */
 void doAction()
 {
 	switch (button)
@@ -111,6 +128,10 @@ ISR(PCINT1_vect)
 	}
 }
 
+/**
+ * @brief Initializes all neccessary things, waits for first button push and displays the seed on the display
+ *
+ */
 void setup()
 {
 	initUSART();
@@ -131,6 +152,10 @@ void setup()
 	writeNumberAndWait(seed, 2000);
 }
 
+/**
+ * @brief Shows current game state on display
+ *
+ */
 void displayScreen()
 {
 	writeNumberToSegment(0, matchesToTake);
@@ -153,6 +178,7 @@ int main(int argc, char const *argv[])
 	if (isPlayerCurrentPlayer())
 	{
 		writeLongWord("congratulations you won   ", 24);
+		// ! this is a bit hacky, as the extra spaces are there so the pointer i move inside the method doesnt move into the next memory location
 	}
 	else
 	{
