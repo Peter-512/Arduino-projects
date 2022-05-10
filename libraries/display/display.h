@@ -10,10 +10,10 @@
 #define LSBFIRST 0
 #define MSBFIRST 1
 #define NUMBER_OF_SEGMENTS 8
-#define SEGMENT1 0xF1
-#define SEGMENT2 0xF2
-#define SEGMENT3 0xF4
-#define SEGMENT4 0xF8
+#define SEGMENT1 0
+#define SEGMENT2 1
+#define SEGMENT3 2
+#define SEGMENT4 3
 
 #define sbi(register, bit) (register |= _BV(bit))
 #define cbi(register, bit) (register &= ~_BV(bit))

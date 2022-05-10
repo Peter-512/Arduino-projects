@@ -1,5 +1,5 @@
-#include "display.h"
 #include <avr/io.h>
+#include <display.h>
 #include <util/delay.h>
 #include <ctype.h>
 #define NUMBER_OF_SEGMENT_DISPLAYS 4
@@ -13,14 +13,14 @@
 const uint8_t SEGMENT_MAP[] = {0xC0, 0xF9, 0xA4, 0xB0, 0x99,
 							   0x92, 0x82, 0xF8, 0X80, 0X90};
 
-// Segment byte maps for characters A-Z
+// * Segment byte maps for characters A-Z
 const uint8_t CHAR_MAP[] = {0x88, 0x83, 0xc6, 0xa1, 0x86, 0x8e, 0xc2,
 							0x8b, 0xcf, 0xe1, 0x8a, 0xc7, 0xea, 0xc8,
 							0xc0, 0x8c, 0x98, 0xcc, 0x92, 0x87, 0xc1,
 							0xd1, 0xd5, 0x89, 0x91, 0xb4};
 
 /* Byte maps to select digit 1 to 4 */
-const uint8_t SEGMENT_SELECT[] = {SEGMENT1, SEGMENT2, SEGMENT3, SEGMENT4};
+const uint8_t SEGMENT_SELECT[] = {0xF1, 0xF2, 0xF4, 0xF8};
 
 void initDisplay()
 {
@@ -61,7 +61,7 @@ void writeSymbolToSegment(uint8_t segment, uint8_t hexcode)
 {
 	cbi(PORTD, LATCH_DIO);
 	shift(hexcode, MSBFIRST);
-	shift(segment, MSBFIRST);
+	shift(SEGMENT_SELECT[segment], MSBFIRST);
 	sbi(PORTD, LATCH_DIO);
 }
 
@@ -82,11 +82,11 @@ void writeLetterToSegment(uint8_t segment, char letter)
 	ascii -= 65;
 	if (isalpha(letter))
 	{
-		writeSymbolToSegment(SEGMENT_SELECT[segment], CHAR_MAP[ascii]);
+		writeSymbolToSegment(segment, CHAR_MAP[ascii]);
 	}
 	else
 	{
-		writeSymbolToSegment(SEGMENT_SELECT[segment], BLANK);
+		writeSymbolToSegment(segment, BLANK);
 	}
 }
 
@@ -109,19 +109,17 @@ void writeWordAndWait(char word[], int delay)
 
 void writeLongWord(char word[], uint8_t len)
 {
-	int j = 0;
+	uint8_t j = 0;
 	while (j < len)
 	{
-		for (int i = 0; j == 0 ? i < 250 : i < 75; i++)
+		for (uint8_t i = 0; j == 0 ? i < 250 : i < 75; i++)
 		{
-			writeLetterToSegment(0, word[0 + j]);
-			_delay_ms(1);
-			writeLetterToSegment(1, word[1 + j]);
-			_delay_ms(1);
-			writeLetterToSegment(2, word[2 + j]);
-			_delay_ms(1);
-			writeLetterToSegment(3, word[3 + j]);
-			_delay_ms(1);
+			for (uint8_t k = 0; k < NUMBER_OF_SEGMENT_DISPLAYS; k++)
+			{
+				writeLetterToSegment(k, word[k + j]);
+				_delay_ms(1);
+			}
+			// TODO fix overflow into next memory locations
 		}
 		j++;
 	}
@@ -130,7 +128,7 @@ void writeLongWord(char word[], uint8_t len)
 // Writes a digit to a certain segment. Segment 0 is the leftmost.
 void writeNumberToSegment(uint8_t segment, uint8_t value)
 {
-	writeSymbolToSegment(SEGMENT_SELECT[segment], SEGMENT_MAP[value]);
+	writeSymbolToSegment(segment, SEGMENT_MAP[value]);
 }
 
 // Writes a nuber between 0 and 9999 to the display. To be used in a loop...
@@ -138,10 +136,10 @@ void writeNumber(int number)
 {
 	if (number < 0 || number > 9999)
 		return;
-	writeNumberToSegment(0, number / 1000);
-	writeNumberToSegment(1, (number / 100) % 10);
-	writeNumberToSegment(2, (number / 10) % 10);
-	writeNumberToSegment(3, number % 10);
+	writeNumberToSegment(SEGMENT1, number / 1000);
+	writeNumberToSegment(SEGMENT2, (number / 100) % 10);
+	writeNumberToSegment(SEGMENT3, (number / 10) % 10);
+	writeNumberToSegment(SEGMENT4, number % 10);
 }
 
 // Writes a number between 0 and 9999 to the display and makes sure that it stays there a certain number of millisecs.
@@ -152,13 +150,13 @@ void writeNumberAndWait(int number, int delay)
 		return;
 	for (int i = 0; i < delay / 4; i++)
 	{
-		writeNumberToSegment(0, number / 1000);
+		writeNumberToSegment(SEGMENT1, number / 1000);
 		_delay_ms(1);
-		writeNumberToSegment(1, (number / 100) % 10);
+		writeNumberToSegment(SEGMENT2, (number / 100) % 10);
 		_delay_ms(1);
-		writeNumberToSegment(2, (number / 10) % 10);
+		writeNumberToSegment(SEGMENT3, (number / 10) % 10);
 		_delay_ms(1);
-		writeNumberToSegment(3, number % 10);
+		writeNumberToSegment(SEGMENT4, number % 10);
 		_delay_ms(1);
 	}
 }
