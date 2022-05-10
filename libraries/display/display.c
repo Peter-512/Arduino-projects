@@ -98,7 +98,6 @@ void writeWord(char word[])
 
 void writeWordAndWait(char word[], int delay)
 {
-
 	for (int i = 0; i < delay; i++)
 	{
 		writeLetterToSegment(i % NUMBER_OF_SEGMENT_DISPLAYS, word[i % NUMBER_OF_SEGMENT_DISPLAYS]);
