@@ -72,7 +72,7 @@ void lightUpMultipleLeds(uint8_t bitmask)
 {
     if (bitmask >= 0b00000000 || bitmask <= 0b00001111)
     {
-        PORTB = ~bitmask << PB2;
+        PORTB &= ~(bitmask << PB2);
     }
 }
 
@@ -107,7 +107,7 @@ void lightDownMultipleLeds(uint8_t bitmask)
 {
     if (bitmask >= 0b00000000 || bitmask <= 0b00001111)
     {
-        PORTB = bitmask << PB2;
+        PORTB |= bitmask << PB2;
     }
 }
 
