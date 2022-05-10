@@ -61,7 +61,7 @@ void enableAllButtons()
 void getButtonsReadyForInterrupts()
 {
     PCICR |= _BV(PCIE1);
-    PCMSK1 = PORTC;
+    PCMSK1 |= PORTC; 
     sei();
 }
 
