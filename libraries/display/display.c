@@ -20,7 +20,7 @@ const uint8_t CHAR_MAP[] = {0x88, 0x83, 0xc6, 0xa1, 0x86, 0x8e, 0xc2,
 							0xd1, 0xd5, 0x89, 0x91, 0xb4};
 
 /* Byte maps to select digit 1 to 4 */
-const uint8_t SEGMENT_SELECT[] = {0xF1, 0xF2, 0xF4, 0xF8};
+const uint8_t SEGMENT_SELECT[] = {SEGMENT1, SEGMENT2, SEGMENT3, SEGMENT4};
 
 void initDisplay()
 {
@@ -57,6 +57,14 @@ void shift(uint8_t val, uint8_t bitorder)
 	}
 }
 
+void writeSymbolToSegment(uint8_t segment, uint8_t hexcode)
+{
+	cbi(PORTD, LATCH_DIO);
+	shift(hexcode, MSBFIRST);
+	shift(segment, MSBFIRST);
+	sbi(PORTD, LATCH_DIO);
+}
+
 void writeLetterToSegment(uint8_t segment, char letter)
 {
 	letter = toupper(letter);
@@ -74,17 +82,11 @@ void writeLetterToSegment(uint8_t segment, char letter)
 	ascii -= 65;
 	if (isalpha(letter))
 	{
-		cbi(PORTD, LATCH_DIO);
-		shift(CHAR_MAP[ascii], MSBFIRST);
-		shift(SEGMENT_SELECT[segment], MSBFIRST);
-		sbi(PORTD, LATCH_DIO);
+		writeSymbolToSegment(SEGMENT_SELECT[segment], CHAR_MAP[ascii]);
 	}
 	else
 	{
-		cbi(PORTD, LATCH_DIO);
-		shift(BLANK, MSBFIRST);
-		shift(SEGMENT_SELECT[segment], MSBFIRST);
-		sbi(PORTD, LATCH_DIO);
+		writeSymbolToSegment(SEGMENT_SELECT[segment], BLANK);
 	}
 }
 
@@ -128,10 +130,7 @@ void writeLongWord(char word[], uint8_t len)
 // Writes a digit to a certain segment. Segment 0 is the leftmost.
 void writeNumberToSegment(uint8_t segment, uint8_t value)
 {
-	cbi(PORTD, LATCH_DIO);
-	shift(SEGMENT_MAP[value], MSBFIRST);
-	shift(SEGMENT_SELECT[segment], MSBFIRST);
-	sbi(PORTD, LATCH_DIO);
+	writeSymbolToSegment(SEGMENT_SELECT[segment], SEGMENT_MAP[value]);
 }
 
 // Writes a nuber between 0 and 9999 to the display. To be used in a loop...

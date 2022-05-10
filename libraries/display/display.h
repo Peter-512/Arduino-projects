@@ -10,6 +10,10 @@
 #define LSBFIRST 0
 #define MSBFIRST 1
 #define NUMBER_OF_SEGMENTS 8
+#define SEGMENT1 0xF1
+#define SEGMENT2 0xF2
+#define SEGMENT3 0xF4
+#define SEGMENT4 0xF8
 
 #define sbi(register, bit) (register |= _BV(bit))
 #define cbi(register, bit) (register &= ~_BV(bit))
@@ -22,3 +26,4 @@ void writeLetterToSegment(uint8_t segment, char letter);
 void writeWord(char word[]);
 void writeWordAndWait(char word[], int delay);
 void writeLongWord(char word[], uint8_t len);
+void writeSymbolToSegment(uint8_t segment, uint8_t hexcode);
