@@ -54,7 +54,7 @@ void displayTime()
 	int time = minutes * 100 + seconds;
 	writeNumber(time);
 
-	writeSymbolToSegment(SEGMENT2, 0x40); // display a dot between minutes and seconds
+	writeSymbolToSegment(SEGMENT2, 0x7F); // display a dot between minutes and seconds
 }
 
 ISR(PCINT1_vect)
