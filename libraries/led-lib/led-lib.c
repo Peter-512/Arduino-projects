@@ -46,7 +46,7 @@ void enableMultipleLeds(uint8_t bitmask)
  */
 void enableAllLeds()
 {
-    DDRB = 0b00111100;
+    DDRB |= 0b00111100;
     lightDownAllLeds(); // to suppress automatic turning on of the LEDs
 }
 
@@ -82,7 +82,7 @@ void lightUpMultipleLeds(uint8_t bitmask)
  */
 void lightUpAllLeds()
 {
-    PORTB = 0b00000000;
+    PORTB &= 0b11000011;
 }
 
 /**
@@ -117,7 +117,7 @@ void lightDownMultipleLeds(uint8_t bitmask)
  */
 void lightDownAllLeds()
 {
-    PORTB = 0b00111100;
+    PORTB |= 0b00111100;
 }
 
 /**
