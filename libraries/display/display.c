@@ -91,6 +91,14 @@ void writeWord(char word[])
 	}
 }
 
+void clearDisplay()
+{
+	writeSymbolToSegment(SEGMENT1, BLANK);
+	writeSymbolToSegment(SEGMENT2, BLANK);
+	writeSymbolToSegment(SEGMENT3, BLANK);
+	writeSymbolToSegment(SEGMENT4, BLANK);
+}
+
 void writeWordAndWait(char word[], int delay)
 {
 	for (int i = 0; i < delay; i++)
@@ -110,21 +118,12 @@ void writeLongWord(char word[], uint8_t len)
 		{
 			for (uint8_t k = 0; k < NUMBER_OF_SEGMENT_DISPLAYS; k++)
 			{
-				writeLetterToSegment(k, word[k + j]);
+				writeLetterToSegment(k, (k + j < len) ? word[k + j] : BLANK);
 				_delay_ms(1);
 			}
-			// TODO fix overflow into next memory locations
 		}
 		j++;
 	}
-}
-
-void clearDisplay()
-{
-	writeSymbolToSegment(SEGMENT1, BLANK);
-	writeSymbolToSegment(SEGMENT2, BLANK);
-	writeSymbolToSegment(SEGMENT3, BLANK);
-	writeSymbolToSegment(SEGMENT4, BLANK);
 }
 
 // Writes a digit to a certain segment. Segment 0 is the leftmost.
@@ -161,4 +160,5 @@ void writeNumberAndWait(int number, int delay)
 		writeNumberToSegment(SEGMENT4, number % 10);
 		_delay_ms(1);
 	}
+	clearDisplay();
 }
