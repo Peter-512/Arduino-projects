@@ -135,8 +135,17 @@ void writeNumberToSegment(uint8_t segment, uint8_t value)
 // Writes a nuber between 0 and 9999 to the display. To be used in a loop...
 void writeNumber(int number)
 {
-	if (number < 0 || number > 9999)
+	if (number < 0)
+	{
+		writeNumberToSegment(SEGMENT1, 0);
 		return;
+	}
+	if (number > 9999)
+	{
+		writeLetterToSegment(SEGMENT3, 'o');
+		writeLetterToSegment(SEGMENT4, 'f');
+		return;
+	}
 	writeNumberToSegment(SEGMENT1, number / 1000);
 	writeNumberToSegment(SEGMENT2, (number / 100) % 10);
 	writeNumberToSegment(SEGMENT3, (number / 10) % 10);
@@ -147,18 +156,30 @@ void writeNumber(int number)
 // Note: the timing is approximate; the amount of time writeNumberToSegment takes is not accounted for...
 void writeNumberAndWait(int number, int delay)
 {
-	if (number < 0 || number > 9999)
-		return;
 	for (int i = 0; i < delay / 4; i++)
 	{
-		writeNumberToSegment(SEGMENT1, number / 1000);
-		_delay_ms(1);
-		writeNumberToSegment(SEGMENT2, (number / 100) % 10);
-		_delay_ms(1);
-		writeNumberToSegment(SEGMENT3, (number / 10) % 10);
-		_delay_ms(1);
-		writeNumberToSegment(SEGMENT4, number % 10);
-		_delay_ms(1);
+		if (number < 0)
+		{
+			writeNumberToSegment(SEGMENT1, 0);
+			_delay_ms(4);
+		}
+		else if (number > 9999)
+		{
+			writeLetterToSegment(SEGMENT3, 'o');
+			writeLetterToSegment(SEGMENT4, 'f');
+			_delay_ms(2);
+		}
+		else
+		{
+			writeNumberToSegment(SEGMENT1, number / 1000);
+			_delay_ms(1);
+			writeNumberToSegment(SEGMENT2, (number / 100) % 10);
+			_delay_ms(1);
+			writeNumberToSegment(SEGMENT3, (number / 10) % 10);
+			_delay_ms(1);
+			writeNumberToSegment(SEGMENT4, number % 10);
+			_delay_ms(1);
+		}
 	}
 	clearDisplay();
 }
