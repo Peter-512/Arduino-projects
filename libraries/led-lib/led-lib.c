@@ -21,7 +21,7 @@ void enableOneLed(int index)
 {
     if (index >= 0 || index < NUMBER_OF_LEDS)
     {
-        DDRB |= (1 << (PB2 + index));
+        DDRB |= _BV(PB2 + index);
         lightDownOneLed(index); // to suppress automatic turning on of the LED
     }
 }
@@ -59,7 +59,7 @@ void lightUpOneLed(int index)
 {
     if (index >= 0 || index < NUMBER_OF_LEDS)
     {
-        PORTB &= ~(1 << (PB2 + index));
+        PORTB &= ~_BV(PB2 + index);
     }
 }
 
@@ -94,7 +94,7 @@ void lightDownOneLed(int index)
 {
     if (index >= 0 || index < NUMBER_OF_LEDS)
     {
-        PORTB |= (1 << (PB2 + index));
+        PORTB |= _BV(PB2 + index);
     }
 }
 
@@ -129,7 +129,7 @@ void lightToggleOneLed(int index)
 {
     if (index >= 0 || index < NUMBER_OF_LEDS)
     {
-        PORTB ^= (1 << (PB2 + index));
+        PORTB ^= _BV(PB2 + index);
     }
 }
 
