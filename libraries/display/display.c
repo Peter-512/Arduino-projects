@@ -80,7 +80,6 @@ void writeLetterToSegment(uint8_t segment, char letter)
 	putchar('\n');
 #endif
 	ascii -= 65;
-	// isalpha(letter) ? writeSymbolToSegment(segment, CHAR_MAP[ascii]) : writeSymbolToSegment(segment, BLANK);
 	writeSymbolToSegment(segment, isalpha(letter) ? CHAR_MAP[ascii] : BLANK);
 }
 
