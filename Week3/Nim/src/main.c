@@ -7,13 +7,12 @@
 #include <util/delay.h>
 #include <led-lib.h>
 #include <usart.h>
+#include <boolean.h>
 #define START_NUMBER 21
 #define MAX_NUMBER 3
-#define true 1
-#define false !true
 
 uint8_t button;
-uint8_t firstButtonPush = true;
+bool firstButtonPush = true;
 uint8_t matchesToTake = 1;
 char players[] = "PC";
 char *currentPlayer = players;
@@ -26,7 +25,7 @@ uint16_t seed;
  *
  * @return uint8_t 0 or 1
  */
-uint8_t isPlayerCurrentPlayer()
+bool isPlayerCurrentPlayer()
 {
 	return *currentPlayer == players[0];
 }
@@ -134,12 +133,12 @@ ISR(PCINT1_vect)
  */
 void setup()
 {
-	initUSART();
+	// initUSART();
 	enableAllButtons();
 	getButtonsReadyForInterrupts();
 	enableAllLeds();
 	initADC();
-	while (!firstButtonPush)
+	while (firstButtonPush)
 	{
 		for (int j = 0; j < 4; j++)
 		{
@@ -177,8 +176,7 @@ int main(int argc, char const *argv[])
 
 	if (isPlayerCurrentPlayer())
 	{
-		writeLongWord("congratulations you won   ", 24);
-		// ! this is a bit hacky, as the extra spaces are there so the pointer i move inside the method doesnt move into the next memory location
+		writeLongWord("congratulations you won", 24);
 	}
 	else
 	{
