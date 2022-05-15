@@ -80,14 +80,8 @@ void writeLetterToSegment(uint8_t segment, char letter)
 	putchar('\n');
 #endif
 	ascii -= 65;
-	if (isalpha(letter))
-	{
-		writeSymbolToSegment(segment, CHAR_MAP[ascii]);
-	}
-	else
-	{
-		writeSymbolToSegment(segment, BLANK);
-	}
+	// isalpha(letter) ? writeSymbolToSegment(segment, CHAR_MAP[ascii]) : writeSymbolToSegment(segment, BLANK);
+	writeSymbolToSegment(segment, isalpha(letter) ? CHAR_MAP[ascii] : BLANK);
 }
 
 void writeWord(char word[])
@@ -105,6 +99,7 @@ void writeWordAndWait(char word[], int delay)
 		writeLetterToSegment(i % NUMBER_OF_SEGMENT_DISPLAYS, word[i % NUMBER_OF_SEGMENT_DISPLAYS]);
 		_delay_ms(1);
 	}
+	clearDisplay();
 }
 
 void writeLongWord(char word[], uint8_t len)
@@ -123,6 +118,14 @@ void writeLongWord(char word[], uint8_t len)
 		}
 		j++;
 	}
+}
+
+void clearDisplay()
+{
+	writeSymbolToSegment(SEGMENT1, BLANK);
+	writeSymbolToSegment(SEGMENT2, BLANK);
+	writeSymbolToSegment(SEGMENT3, BLANK);
+	writeSymbolToSegment(SEGMENT4, BLANK);
 }
 
 // Writes a digit to a certain segment. Segment 0 is the leftmost.
