@@ -93,10 +93,10 @@ void writeWord(char word[])
 
 void clearDisplay()
 {
-	writeSymbolToSegment(SEGMENT1, BLANK);
-	writeSymbolToSegment(SEGMENT2, BLANK);
-	writeSymbolToSegment(SEGMENT3, BLANK);
-	writeSymbolToSegment(SEGMENT4, BLANK);
+	for (uint8_t i = 0; i < NUMBER_OF_SEGMENTS; i++)
+	{
+		writeSymbolToSegment(i, BLANK);
+	}
 }
 
 void writeWordAndWait(char word[], int delay)
@@ -111,18 +111,18 @@ void writeWordAndWait(char word[], int delay)
 
 void writeLongWord(char word[], uint8_t len)
 {
-	uint8_t j = 0;
-	while (j < len)
+	uint8_t i = 0;
+	while (i < len)
 	{
-		for (uint8_t i = 0; j == 0 ? i < 250 : i < 75; i++)
+		for (uint8_t j = 0; i == 0 ? j < 250 : j < 75; j++)
 		{
 			for (uint8_t k = 0; k < NUMBER_OF_SEGMENT_DISPLAYS; k++)
 			{
-				writeLetterToSegment(k, (k + j < len) ? word[k + j] : BLANK);
+				writeLetterToSegment(k, (k + i < len) ? word[k + i] : BLANK);
 				_delay_ms(1);
 			}
 		}
-		j++;
+		i++;
 	}
 }
 
