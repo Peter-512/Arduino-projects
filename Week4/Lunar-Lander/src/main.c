@@ -280,5 +280,8 @@ int main(int argc, char const *argv[])
 	}
 
 	printLogBook();
+
+	free(logBook);
+
 	return 0;
 }
