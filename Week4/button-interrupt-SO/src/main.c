@@ -30,7 +30,7 @@ int idleTime = 0;			  // how long the button was idle
 void updateState()
 {
 
-	if (buttonState == true) // the button has been just pressed
+	if (buttonState) // the button has been just pressed
 	{
 		startPressed = timerCounter;
 		idleTime = startPressed;
