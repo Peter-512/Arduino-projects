@@ -6,11 +6,10 @@
 #include <display.h>
 #include <button-lib.h>
 #include <avr/interrupt.h>
+#include <stdlib.h>
 #define MULTIPLE 250
 // #define DEBUG
-#ifdef DEBUG
 #include <usart.h>
-#endif
 #define MOON
 #ifndef MOON
 #define EARTH
@@ -20,6 +19,9 @@
 #define MAX_BURST 50
 #define STARTING_FUEL 1500
 #define MAX_FUEL_CELL (STARTING_FUEL / NUMBER_OF_LEDS)
+#define SIZE(x) (sizeof(x))
+#define LEN(x) (SIZE(x) / SIZE(x[0]))
+#define NEW_SIZE(type, len) ((len + 1) * SIZE(type))
 
 float currentSpeed = 100; // speed in m/s (meters per second)
 #ifdef MOON
@@ -28,9 +30,9 @@ const float gravity = 1.622; // acceleration in m/s²
 #ifdef EARTH
 float gravity = 9.807; // acceleration in m/s²
 #endif
-int distance = 9999;			   // distance to the lunar surface in meters - m
-float fuelReserve = STARTING_FUEL; // liter
-float burst = 0;
+int distance = 9999;			 // distance to the lunar surface in meters - m
+int fuelReserve = STARTING_FUEL; // liter
+uint8_t burst = 0;
 uint8_t timerCounter = 0;
 bool buttonState = false;
 bool lastButtonState = false;
@@ -39,6 +41,42 @@ uint16_t buttonPushStart = 0;
 uint16_t buttonPushEnd = 0;
 uint8_t currentFuelCell = NUMBER_OF_LEDS;
 uint32_t ledCounter = 0;
+uint8_t logBookLength = 0;
+
+typedef struct
+{
+	int distance;
+	float currentSpeed;
+	uint8_t burst;
+	int fuelReserve;
+} LOG_ENTRY;
+
+LOG_ENTRY *logBook;
+
+void printLogEntry(int second)
+{
+	printf("Recorded at the %d. second: \n", second);
+	printf("Distance:      %d \n", logBook[second].distance);
+	printf("Current speed: %.2f \n", logBook[second].currentSpeed);
+	printf("Fuel reserve:  %d \n", logBook[second].fuelReserve);
+	printf("Burst:         %d \n\n", logBook[second].burst);
+}
+
+void saveParameters()
+{
+	logBookLength++;
+
+	logBook = realloc(logBook, NEW_SIZE(LOG_ENTRY, logBookLength));
+
+	logBook[logBookLength].burst = burst;
+	logBook[logBookLength].currentSpeed = currentSpeed;
+	logBook[logBookLength].distance = distance;
+	logBook[logBookLength].fuelReserve = fuelReserve;
+
+#ifdef DEBUG
+	printLogEntry(logBookLength);
+#endif
+}
 
 void updateParameters()
 {
@@ -67,8 +105,17 @@ void updateParameters()
 	buttonPushEnd = 0;
 	currentSpeed += gravity - burst / 5;
 	distance -= currentSpeed;
+	if (distance < 0)
+	{
+		distance = 0;
+	}
 	fuelReserve -= burst;
 	currentFuelCell = (int)(fuelReserve / MAX_FUEL_CELL);
+
+	if (logBook)
+	{
+		saveParameters();
+	}
 
 #ifdef DEBUG
 	printf("Distance:        %d\n", distance);
@@ -149,9 +196,7 @@ void initLEDTimer()
 
 void initialize()
 {
-#ifdef DEBUG
 	initUSART();
-#endif
 	initDisplay();
 	enableAllButtons();
 	getButtonsReadyForInterrupts();
@@ -199,15 +244,32 @@ void showParameters()
 	}
 }
 
+void printLogBook()
+{
+	for (int i = 0; i <= logBookLength; i++)
+	{
+		printLogEntry(i);
+	}
+}
+
 int main(int argc, char const *argv[])
 {
 	initialize();
+
+	logBook = malloc(SIZE(LOG_ENTRY));
+
+	logBook[logBookLength].burst = burst;
+	logBook[logBookLength].currentSpeed = currentSpeed;
+	logBook[logBookLength].distance = distance;
+	logBook[logBookLength].fuelReserve = fuelReserve;
+
 	while (distance > MAX_LANDING_HEIGHT || (distance > 0 && currentSpeed > MAX_LANDING_SPEED))
 	{
 		showParameters();
 	}
 
 	cli();
+
 	if (currentSpeed <= MAX_LANDING_SPEED)
 	{
 		writeLongWord("Thats one small step for man one giant leap for mankind", 58);
@@ -216,5 +278,7 @@ int main(int argc, char const *argv[])
 	{
 		writeLongWord("Houston we have a problem", 26);
 	}
+
+	printLogBook();
 	return 0;
 }
