@@ -2,3 +2,4 @@
 
 void initADC();
 uint16_t getPotentiometerValue();
+void initPotentioInterrupts();

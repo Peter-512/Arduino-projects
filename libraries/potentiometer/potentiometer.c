@@ -7,6 +7,11 @@ void initADC()
     ADCSRA |= _BV(ADEN);
 }
 
+void initPotentioInterrupts()
+{
+    ADCSRA |= _BV(ADIE);
+}
+
 uint16_t getPotentiometerValue()
 {
     ADCSRA |= _BV(ADSC);
