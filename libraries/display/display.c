@@ -2,7 +2,6 @@
 #include <display.h>
 #include <util/delay.h>
 #include <ctype.h>
-#define NUMBER_OF_SEGMENT_DISPLAYS 4
 #define BLANK 0xff
 // #define DEBUG
 #ifdef DEBUG

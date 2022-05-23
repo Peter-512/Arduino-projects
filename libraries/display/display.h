@@ -10,6 +10,7 @@
 #define LSBFIRST 0
 #define MSBFIRST 1
 #define NUMBER_OF_SEGMENTS 8
+#define NUMBER_OF_SEGMENT_DISPLAYS 4
 #define SEGMENT1 0
 #define SEGMENT2 1
 #define SEGMENT3 2
