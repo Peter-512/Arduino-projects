@@ -1,6 +1,6 @@
 import model.SerialArduinoConnection;
-import view.ArduinoPresenter;
-import view.ArduinoView;
+import view.mainmenu.MainMenuPresenter;
+import view.mainmenu.MainMenuView;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -12,8 +12,8 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) {
         SerialArduinoConnection connection = new SerialArduinoConnection();
-        ArduinoView view = new ArduinoView();
-        new ArduinoPresenter(connection, view);
+        MainMenuView view = new MainMenuView();
+        new MainMenuPresenter(connection, view);
         stage.setScene(new Scene(view));
         stage.show();
     }
