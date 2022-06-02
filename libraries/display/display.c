@@ -3,6 +3,15 @@
 #include <util/delay.h>
 #include <ctype.h>
 #define BLANK 0xff
+#define LOW 0
+#define HIGH 1
+/* Define shift register pins used for seven segment display */
+#define LATCH_DIO PD4
+#define CLK_DIO PD7
+#define DATA_DIO PB0
+
+#define LSBFIRST 0
+#define MSBFIRST 1
 // #define DEBUG
 #ifdef DEBUG
 #include <usart.h>
