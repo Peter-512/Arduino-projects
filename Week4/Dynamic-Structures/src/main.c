@@ -20,13 +20,13 @@ void fullDeck(CARD *deck)
 		{
 			index = (i * 13) + j;
 			// TODO: use malloc to reserve just enough space for the suit
-			deck[index].suit = malloc(strlen(suits[i]) + 1);
+			deck[index].suit = malloc(sizeof suits[i]);
 
 			// TODO: copy the color to the allocated address space
 			strcpy(deck[index].suit, suits[i]);
 
 			// TODO: set the card's value
-			deck[index].value = j;
+			deck[index].value = j + 1;
 		}
 	}
 }
@@ -64,6 +64,7 @@ CARD *drawCard(CARD deck[])
 
 int main()
 {
+	srand(3);
 	initUSART();
 	// TODO: use calloc to make the deck of cards
 	CARD *deck = calloc(52, sizeof(CARD));
