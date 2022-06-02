@@ -2,68 +2,89 @@
 #include <display.h>
 #include <boolean.h>
 #include <button-lib.h>
-#include <string.h>
 #include <avr/interrupt.h>
 #include <led-lib.h>
+#include <serial-lib.h>
+#include <util/delay.h>
+#include <stdlib.h>
+#include <buzzer.h>
 #include <avr/io.h>
+#include <usart.h>
 #define UNDERSCORE 0xf7
 #define DOT 0x7f
-// #define DEBUG
-#ifdef DEBUG
-#include <usart.h>
-#endif
-#define WORD_LENGTH 4
 #define ALPHABET_SIZE 26
-#define POTENTIO_DEBOUNCE 4
-#define abs(x) (x < 0 ? ~x + 1 : x)
+#define POTENTIO_DEBOUNCE 2
+#define WORD_LENGTH 4
 
 uint8_t selected = 0;
 int chosenWord[] = {-1, -1, -1, -1};
-uint16_t previousADCValue = 0;
-uint16_t currentASCII = 0;
-char secret[] = "KILL";
-uint8_t secretASCII[4];
+int16_t previousADCValue = 0;
+uint8_t currentASCII;
+char *secret;
+uint8_t secretWord[WORD_LENGTH];
+bool isCorrect = false;
 
 void initialize()
 {
-#ifdef DEBUG
 	initUSART();
-#endif
 	initADC();
 	initPotentioInterrupts();
 	initDisplay();
 	enableAllButtons();
 	enableAllLeds();
+	initSerial();
+	enableBuzzer();
 	getButtonsReadyForInterrupts();
 }
 
-void convertSecretIntoASCII()
+void convertAsciiToChar(char *string)
 {
-	for (uint8_t i = 0; i < strlen(secret); i++)
+	for (int i = 0; i < WORD_LENGTH; i++)
 	{
-		secretASCII[i] = (uint8_t)secret[i];
+		string[i] = (char)chosenWord[i];
 	}
 }
 
 void confirm()
 {
-	for (uint8_t i = 0; i < strlen(secret); i++)
-	{
-		if (secretASCII[i] == chosenWord[i])
-		{
-			lightUpOneLed(i);
-		}
-		else
-		{
-			lightDownOneLed(i);
-		}
-	}
+	char *string = calloc(WORD_LENGTH + 1, sizeof(char));
+	convertAsciiToChar(string);
+	printf("%s", string);
 	return;
 }
 
-/**
- * @brief Construct a new ISR object
- */
+uint8_t wordIndex = 0;
+ISR(USART_RX_vect) // The interrupt routine for receiving data
+{
+	uint8_t byte = UDR0; // serial data is located in the UDR0 register
+	secretWord[wordIndex] = byte;
+	wordIndex++;
+}
+
+bool isGuessCorrect()
+{
+	for (uint8_t i = 0; i < WORD_LENGTH; i++)
+	{
+		if (secret[i] != (char)chosenWord[i])
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+bool isGuessWordCorrect()
+{
+	for (uint8_t i = 0; i < WORD_LENGTH; i++)
+	{
+		if (secretWord[i] != chosenWord[i])
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
 ISR(PCINT1_vect)
 {
 	uint8_t button = whichButtonPushed();
@@ -72,16 +93,34 @@ ISR(PCINT1_vect)
 	case BUTTON1:
 		chosenWord[selected] = currentASCII;
 		selected = (selected + WORD_LENGTH - 1) % WORD_LENGTH;
+		if (chosenWord[selected] == -1)
+		{
+			currentASCII = 65;
+		}
+		else
+		{
+			currentASCII = chosenWord[selected];
+		}
 		break;
 
 	case BUTTON2:
 		chosenWord[selected] = currentASCII;
+		// isCorrect = isGuessCorrect();
+		isCorrect = isGuessWordCorrect();
 		confirm();
 		break;
 
 	case BUTTON3:
 		chosenWord[selected] = currentASCII;
 		selected = (selected + 1) % WORD_LENGTH;
+		if (chosenWord[selected] == -1)
+		{
+			currentASCII = 65;
+		}
+		else
+		{
+			currentASCII = chosenWord[selected];
+		}
 		break;
 
 	default:
@@ -91,13 +130,15 @@ ISR(PCINT1_vect)
 
 ISR(ADC_vect)
 {
-	uint16_t value = ADC;
-	if (abs(value) > POTENTIO_DEBOUNCE)
+	int16_t value = ADC;
+	if ((value - previousADCValue) > POTENTIO_DEBOUNCE)
 	{
-		currentASCII = ((value / POTENTIO_DEBOUNCE)) % ALPHABET_SIZE + 65;
-#ifdef DEBUG
-		printf("Value: %c\n", currentASCII);
-#endif
+		currentASCII = (currentASCII + 1 - 65) % ALPHABET_SIZE + 65;
+		previousADCValue = value;
+	}
+	else if ((value - previousADCValue) < -POTENTIO_DEBOUNCE)
+	{
+		currentASCII = (currentASCII + ALPHABET_SIZE - 1 - 65) % ALPHABET_SIZE + 65;
 		previousADCValue = value;
 	}
 }
@@ -106,7 +147,32 @@ int main()
 {
 	initialize();
 
-	while (true)
+	secret = calloc(WORD_LENGTH + 1, sizeof(char));
+	while (wordIndex <= WORD_LENGTH - 1)
+	{
+		for (int i = 0; i < NUMBER_OF_LEDS; i++)
+		{
+			lightToggleOneLed(i);
+			_delay_ms(100);
+		}
+	}
+
+	// char *w = calloc(WORD_LENGTH + 1, sizeof(char));
+	// for (size_t i = 0; i < WORD_LENGTH; i++)
+	// {
+	// 	w[i] = (char)secretWord[i];
+	// }
+
+	// printf("%s", w);
+
+	// for (size_t i = 0; i < WORD_LENGTH; i++)
+	// {
+	// 	printf("%c", secretWord[i]);
+	// }
+	
+
+	currentASCII = 64;
+	while (!isCorrect)
 	{
 		for (int i = 0; i < NUMBER_OF_SEGMENT_DISPLAYS; i++)
 		{
@@ -129,5 +195,18 @@ int main()
 		}
 		ADCSRA |= _BV(ADSC);
 	}
+
+	playTone(30, 100);
+	_delay_ms(100);
+	playTone(30, 100);
+	_delay_ms(100);
+	playTone(30, 100);
+	_delay_ms(100);
+	playTone(50, 100);
+	_delay_ms(500);
+	playTone(30, 100);
+	_delay_ms(100);
+	playTone(50, 1000);
+
 	return 0;
 }
