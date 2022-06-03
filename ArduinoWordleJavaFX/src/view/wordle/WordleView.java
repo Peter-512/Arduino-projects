@@ -12,10 +12,10 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 public class WordleView extends BorderPane {
-	static final int MAX_LETTERS = 4;
+	private static final int MAX_LETTERS = 4;
 	private Text colorLegend;
-	VBox top;
-	Text text;
+	private VBox top;
+	private Text text;
 	private Text instructions;
 	private HBox hints;
 
@@ -70,11 +70,11 @@ public class WordleView extends BorderPane {
 		setBottom(colorLegend);
 	}
 
-	public HBox getHints() {
+	HBox getHints() {
 		return hints;
 	}
 
-	public Text getText() {
+	Text getText() {
 		return text;
 	}
 }

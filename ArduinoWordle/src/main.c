@@ -7,6 +7,7 @@
 #include <serial-lib.h>
 #include <util/delay.h>
 #include <stdlib.h>
+#include <string.h>
 #include <buzzer.h>
 #include <avr/io.h>
 #include <usart.h>
@@ -20,9 +21,11 @@ uint8_t selected = 0;
 int chosenWord[] = {-1, -1, -1, -1};
 int16_t previousADCValue = 0;
 uint8_t currentASCII;
-char *secret;
-uint8_t secretWord[WORD_LENGTH];
-bool isCorrect = false;
+// char *secret;
+// uint8_t secretWord[WORD_LENGTH];
+// bool isCorrect = false;
+uint8_t wordIndex = 0;
+int guessCounter;
 
 void initialize()
 {
@@ -53,37 +56,38 @@ void confirm()
 	return;
 }
 
-uint8_t wordIndex = 0;
 ISR(USART_RX_vect) // The interrupt routine for receiving data
 {
 	uint8_t byte = UDR0; // serial data is located in the UDR0 register
-	secretWord[wordIndex] = byte;
+	// secretWord[wordIndex] = byte;
+	// char *c = (char)byte;
+	// strcat(secret, c);
 	wordIndex++;
 }
 
-bool isGuessCorrect()
-{
-	for (uint8_t i = 0; i < WORD_LENGTH; i++)
-	{
-		if (secret[i] != (char)chosenWord[i])
-		{
-			return false;
-		}
-	}
-	return true;
-}
+// bool isGuessCorrect()
+// {
+// 	for (uint8_t i = 0; i < WORD_LENGTH; i++)
+// 	{
+// 		if (secret[i] != (char)chosenWord[i])
+// 		{
+// 			return false;
+// 		}
+// 	}
+// 	return true;
+// }
 
-bool isGuessWordCorrect()
-{
-	for (uint8_t i = 0; i < WORD_LENGTH; i++)
-	{
-		if (secretWord[i] != chosenWord[i])
-		{
-			return false;
-		}
-	}
-	return true;
-}
+// bool isGuessCorrectASCII()
+// {
+// 	for (uint8_t i = 0; i < WORD_LENGTH; i++)
+// 	{
+// 		if (secretWord[i] != chosenWord[i])
+// 		{
+// 			return false;
+// 		}
+// 	}
+// 	return true;
+// }
 
 ISR(PCINT1_vect)
 {
@@ -106,7 +110,8 @@ ISR(PCINT1_vect)
 	case BUTTON2:
 		chosenWord[selected] = currentASCII;
 		// isCorrect = isGuessCorrect();
-		isCorrect = isGuessWordCorrect();
+		// isCorrect = isGuessCorrectASCII();
+		guessCounter++;
 		confirm();
 		break;
 
@@ -146,8 +151,9 @@ ISR(ADC_vect)
 int main()
 {
 	initialize();
+	guessCounter = 0;
 
-	secret = calloc(WORD_LENGTH + 1, sizeof(char));
+	// secret = calloc(WORD_LENGTH + 1, sizeof(char));
 	while (wordIndex <= WORD_LENGTH - 1)
 	{
 		for (int i = 0; i < NUMBER_OF_LEDS; i++)
@@ -157,22 +163,10 @@ int main()
 		}
 	}
 
-	// char *w = calloc(WORD_LENGTH + 1, sizeof(char));
-	// for (size_t i = 0; i < WORD_LENGTH; i++)
-	// {
-	// 	w[i] = (char)secretWord[i];
-	// }
-
-	// printf("%s", w);
-
-	// for (size_t i = 0; i < WORD_LENGTH; i++)
-	// {
-	// 	printf("%c", secretWord[i]);
-	// }
-	
+	lightDownAllLeds();
 
 	currentASCII = 64;
-	while (!isCorrect)
+	while (wordIndex < WORD_LENGTH + 6)
 	{
 		for (int i = 0; i < NUMBER_OF_SEGMENT_DISPLAYS; i++)
 		{
@@ -196,17 +190,20 @@ int main()
 		ADCSRA |= _BV(ADSC);
 	}
 
-	playTone(30, 100);
-	_delay_ms(100);
-	playTone(30, 100);
-	_delay_ms(100);
-	playTone(30, 100);
-	_delay_ms(100);
-	playTone(50, 100);
-	_delay_ms(500);
-	playTone(30, 100);
-	_delay_ms(100);
-	playTone(50, 1000);
+	// playTone(30, 100);
+	// _delay_ms(100);
+	// playTone(30, 100);
+	// _delay_ms(100);
+	// playTone(30, 100);
+	// _delay_ms(100);
+	// playTone(50, 100);
+	// _delay_ms(500);
+	// playTone(30, 100);
+	// _delay_ms(100);
+	// playTone(50, 1000);
+	playTone(30, 1); // ! DEBUG
+
+	printf("%d", guessCounter);
 
 	return 0;
 }

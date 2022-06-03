@@ -6,7 +6,10 @@ import com.fazecast.jSerialComm.SerialPortEvent;
 import javafx.application.Platform;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
 import model.SerialArduinoConnection;
+import view.endscreen.EndScreenPresenter;
+import view.endscreen.EndScreenView;
 
 public class WordlePresenter implements SerialPortDataListener {
 	private final SerialArduinoConnection model;
@@ -26,7 +29,7 @@ public class WordlePresenter implements SerialPortDataListener {
 	private void updateView() {
 		if (model.isPossibleWord(model.getGuess())) {
 			view.getText().setText(null);
-			for (int i = 0; i < model.getGuessArray().length; i++) {
+			for (int i = 0; i < model.getGuessArray().length || i < view.getHints().getChildren().size(); i++) {
 				char letter = model.getGuessArray()[i];
 				final Rectangle rectangle = (Rectangle) view.getHints().getChildren().get(i);
 
@@ -46,6 +49,16 @@ public class WordlePresenter implements SerialPortDataListener {
 		}
 		if (model.isGuessCorrect()) {
 			System.out.println("Guessed correctly!");
+			model.sendString("You win!");
+
+			//			Set EndScreen
+			model.removeDataListener();
+			final EndScreenView endScreenView = new EndScreenView();
+			new EndScreenPresenter(model, endScreenView);
+			view.getScene().setRoot(endScreenView);
+			Stage stage = (Stage) endScreenView.getScene().getWindow();
+			endScreenView.getScene().getWindow().sizeToScene();
+			stage.centerOnScreen();
 		}
 	}
 
@@ -61,7 +74,7 @@ public class WordlePresenter implements SerialPortDataListener {
 		}
 		String guess = model.getGuess();
 		StringBuilder text;
-		if (guess.length() == 4) {
+		if (guess.length() >= 4) {
 			text = new StringBuilder();
 		} else {
 			text = new StringBuilder(guess);
@@ -70,7 +83,6 @@ public class WordlePresenter implements SerialPortDataListener {
 		for (byte oneByte : model.receiveBytes()) {
 			text.append((char) oneByte);
 		}
-//		Platform.runLater(() -> System.out.println(text));
 		Platform.runLater(() -> model.setGuess(text.toString()));
 		Platform.runLater(this::updateView);
 	}
