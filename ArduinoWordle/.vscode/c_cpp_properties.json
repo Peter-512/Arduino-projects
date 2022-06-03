@@ -1,0 +1,28 @@
+{
+    "configurations": [
+        {
+            "name": "Mac",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/Users/peterbuschenreiter/.platformio/packages/toolchain-atmelavr/avr/include",
+                "/Users/peterbuschenreiter/Documents/KDG/Year1/Infrastructure/Semester 2/Peter-Buschenreiter/libraries/button-lib",
+                "/Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/Kernel.framework/Versions/A/Headers/mach",
+                "/Users/peterbuschenreiter/Documents/KDG/Year1/Infrastructure/Semester 2/Peter-Buschenreiter/libraries/display",
+                "/Users/peterbuschenreiter/Documents/KDG/Year1/Infrastructure/Semester 2/Peter-Buschenreiter/libraries/potentiometer",
+                "/Users/peterbuschenreiter/Documents/KDG/Year1/Infrastructure/Semester 2/Peter-Buschenreiter/libraries/led-lib",
+                "/Users/peterbuschenreiter/Documents/KDG/Year1/Infrastructure/Semester 2/Peter-Buschenreiter/libraries/serial-lib",
+                "/Users/peterbuschenreiter/Documents/KDG/Year1/Infrastructure/Semester 2/Peter-Buschenreiter/libraries/buzzer",
+                "/Users/peterbuschenreiter/Documents/KDG/Year1/Infrastructure/Semester 2/Peter-Buschenreiter/Serial-Communication-Java/talk_to_pc/lib/usart"
+            ],
+            "defines": [],
+            "macFrameworkPath": [
+                "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks"
+            ],
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c17",
+            "cppStandard": "c++98",
+            "intelliSenseMode": "macos-clang-arm64"
+        }
+    ],
+    "version": 4
+}
