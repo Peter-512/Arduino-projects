@@ -156,6 +156,7 @@ int main()
 		}
 		ADCSRA |= _BV(ADSC);
 	}
+	printf("%d", guessCounter);
 
 	playTone(30, 100);
 	_delay_ms(100);
@@ -168,8 +169,6 @@ int main()
 	playTone(30, 100);
 	_delay_ms(100);
 	playTone(50, 1000);
-
-	printf("%d", guessCounter);
 
 	return 0;
 }
