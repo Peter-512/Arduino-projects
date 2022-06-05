@@ -15,3 +15,13 @@
 ## Lunar Lander 🚀🌕
 
 [`Week4/Lunar-Lander`](https://gitlab.com/kdg-ti/infrastructure1.2/2021-2022/Peter-Buschenreiter/-/tree/main/Week4/Lunar-Lander)
+
+## Personal Project(s)
+
+### ArdunioWordle with JavaFX 🟩🟨🟨⬛️
+
+[`ArduinoWordle`](add link)
+
+### 4-Letter Word Quiz 🚧 (incomplete)
+
+[`4-Letter-Word-Quiz`](add link)
