@@ -63,7 +63,6 @@ void initTimer()
 	TIMSK2 |= _BV(OCIE0A);
 	OCR2A = 249;
 	sei();
-	TCCR2B |= _BV(CS22) | _BV(CS21);
 }
 
 void tick()
@@ -168,7 +167,7 @@ void convert(int array[], char string[])
 void saveAttempt()
 {
 	char *string = malloc(5);
-	convert(currentGuessASCII, string); // ! DEBUG
+	convert(currentGuessASCII, string);
 
 	strcpy(puzzle.attempts[attempts].guess, string);
 	int totalSeconds = seconds + minutes * SECONDS_IN_MINUTE;
@@ -235,6 +234,7 @@ ISR(PCINT1_vect)
 		case BUTTON2:
 			selectCategory();
 			prepareCurrentGuess();
+			TCCR2B |= _BV(CS22) | _BV(CS21);
 			break;
 
 		case BUTTON3:
