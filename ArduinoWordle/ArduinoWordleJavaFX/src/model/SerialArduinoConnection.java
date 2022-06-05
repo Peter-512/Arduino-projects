@@ -26,7 +26,7 @@ public class SerialArduinoConnection {
 	}
 
 	public void sendString(String data) {
-		System.out.printf("Sending secret word %s to Arduino...\n", data); // ! DEBUG ONLY, REVEALS THE SECRET WORD
+//		System.out.printf("Sending secret word %s to Arduino...\n", data); // ! DEBUG ONLY, REVEALS THE SECRET WORD
 		PrintWriter writer = new PrintWriter(arduinoPort.getOutputStream());
 		writer.print(data);
 		writer.close();
