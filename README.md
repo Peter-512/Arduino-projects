@@ -24,4 +24,4 @@
 
 ### 4-Letter Word Quiz 🚧 (incomplete)
 
-[`4-Letter-Word-Quiz`](add link)
+[`4-Letter-Word-Quiz`](https://gitlab.com/kdg-ti/infrastructure1.2/2021-2022/Peter-Buschenreiter/-/tree/main/4-Letter-Word-Quiz)
