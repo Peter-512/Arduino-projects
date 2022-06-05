@@ -20,7 +20,7 @@
 
 ### ArdunioWordle with JavaFX 🟩🟨🟨⬛️
 
-[`ArduinoWordle`](add link)
+[`ArduinoWordle`](https://gitlab.com/kdg-ti/infrastructure1.2/2021-2022/Peter-Buschenreiter/-/tree/main/ArduinoWordle)
 
 ### 4-Letter Word Quiz 🚧 (incomplete)
 
