@@ -5,10 +5,7 @@ import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;
 import javafx.application.Platform;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 import model.SerialArduinoConnection;
-import view.wordle.WordlePresenter;
-import view.wordle.WordleView;
 
 public class EndScreenPresenter implements SerialPortDataListener {
 	private SerialArduinoConnection model;
@@ -31,7 +28,8 @@ public class EndScreenPresenter implements SerialPortDataListener {
 	}
 
 	private void updateView() {
-		view.getGuesses().setText(String.format("%d guess%s", model.getGuesses(), model.getGuesses() == 1 ? " only!" : "es"));
+		view.getGuesses()
+		    .setText(String.format("%d guess%s", model.getGuesses(), model.getGuesses() == 1 ? " only!" : "es"));
 	}
 
 	@Override
